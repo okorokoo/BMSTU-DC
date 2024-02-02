@@ -5,14 +5,11 @@ import json
 
 class Booking:
     def __init__(self, room_name: str, start: datetime, end: datetime):
+        if end < start:
+            raise ValueError('datetime конца брони оказался раньше, чем datetime начала')
         self.room_name = room_name
         self.start = start
         self.end = end
-        self.start_date = datetime.strftime(self.start, "%Y-%m-%d")
-        self.end_date = datetime.strftime(self.start, "%Y-%m-%d")
-        self.start_time = datetime.strftime(self.start, "%H:%M")
-        self.end_time = datetime.strftime(self.end, "%H:%M")
-        self.duration = int((self.end - self.start).total_seconds()/60)
         self.booking = {
             'room_name': self.room_name,
             'start_date': self.start_date,
@@ -21,10 +18,26 @@ class Booking:
             'end_time': self.end_time,
             'duration': self.duration
         }
-        # self.booking_json = str(json.dumps(self.booking))
 
-        if end < start:
-            raise ValueError('datetime конца брони оказался раньше, чем datetime начала')
+    @property
+    def start_date(self):
+        return datetime.strftime(self.start, "%Y-%m-%d")
+
+    @property
+    def end_date(self):
+        return datetime.strftime(self.end, "%Y-%m-%d")
+
+    @property
+    def start_time(self):
+        return datetime.strftime(self.start, "%H:%M")
+
+    @property
+    def end_time(self):
+        return datetime.strftime(self.end, "%H:%M")
+
+    @property
+    def duration(self):
+        return int((self.end - self.start).total_seconds()/60)
 
 
 def create_booking(room_name, start, end) -> str:
@@ -45,12 +58,3 @@ def create_booking(room_name, start, end) -> str:
         print("Заканчиваем создание бронирования")
     b['booking'] = booking.booking
     return json.dumps(b)
-
-
-# result = create_booking("Sun", datetime(2022, 9, 1, 14), datetime(2022, 9, 1, 15, 15))
-# print(result)
-
-booking = Booking('Солнышко', datetime(2022, 9, 1, 14), datetime(2022, 9, 1, 15, 15))
-print(booking.start_time)
-booking.start = datetime(2022, 9, 1, 9)
-print(booking.start_time)
